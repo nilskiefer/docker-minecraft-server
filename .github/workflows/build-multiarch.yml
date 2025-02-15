@@ -15,6 +15,13 @@ on:
 
 jobs:
   build:
+    # Define job-level environment variables.
+    # Note: You cannot reference one job-level env var inside another.
+    env:
+      DOCKER_REPO: ${{ secrets.DOCKER_USER }}/minecraft-server
+      IMAGE_TO_TEST: ${{ secrets.DOCKER_USER }}/minecraft-server:test-${{ matrix.variant }}-${{ github.run_id }}
+      HAS_IMAGE_REPO_ACCESS: ${{ secrets.DOCKER_USER != '' && secrets.DOCKER_PASSWORD != '' }}
+      MAIN_VARIANT: java21
     strategy:
       fail-fast: false
       matrix:
@@ -96,21 +103,12 @@ jobs:
             baseImage: ibm-semeru-runtimes:open-8u312-b07-jre
             platforms: linux/amd64,linux/arm64
             mcVersion: 1.12.2
-    env:
-      # IMAGE_TO_TEST now uses a DOCKER_REPO variable that will be set dynamically.
-      IMAGE_TO_TEST: "${{ env.DOCKER_REPO }}:test-${{ matrix.variant }}-${{ github.run_id }}"
-      HAS_IMAGE_REPO_ACCESS: ${{ secrets.DOCKER_USER != '' && secrets.DOCKER_PASSWORD != '' }}
-      MAIN_VARIANT: java21
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4.2.2
         with:
           fetch-depth: 0
-
-      - name: Set Docker Repo variable
-        # This step sets DOCKER_REPO dynamically using your Docker Hub username from secret.
-        run: echo "DOCKER_REPO=${{ secrets.DOCKER_USER }}/minecraft-server" >> $GITHUB_ENV
 
       - name: Docker meta
         id: meta
