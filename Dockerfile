@@ -7,7 +7,7 @@ FROM ${BASE_IMAGE}
 ARG TARGETOS
 ARG TARGETARCH
 ARG TARGETVARIANT
-#
+
 # The following three arg/env vars get used by the platform specific "install-packages" script
 ARG EXTRA_DEB_PACKAGES=""
 ARG EXTRA_DNF_PACKAGES=""
